@@ -1,8 +1,6 @@
 import Reflux from 'reflux';
 import _ from 'lodash';
 
-import Config from '../Utils/Config';
-
 import Actions from '../Actions/Actions';
 
 export default Reflux.createStore({
@@ -16,6 +14,8 @@ export default Reflux.createStore({
       availablePlayers: [],
       currentPlayer: null,
       opponent: null,
+      isPlayerTurn: false,
+      turn: null,
       items: []
     };
   },
@@ -54,10 +54,10 @@ export default Reflux.createStore({
 
   setAvailablePlayers() {
     this.data.availablePlayers = this.data.players.filter((player) => !player.is_connected);
-    console.error('availableplayers', this.data.availablePlayers);
-    if (!this.data.currentPlayer) {
+    if (!this.data.currentPlayer && this.data.availablePlayers.length > 0) {
       this.setCurrentPlayer();
     }
+    this.refreshPlayers();
   },
 
   setCurrentPlayer() {
@@ -66,6 +66,15 @@ export default Reflux.createStore({
 
     this.data.currentPlayer = availablePlayers[randomIndex];
     this.data.opponent = _.differenceBy(this.data.players, [this.data.currentPlayer], 'id')[0];
+    this.data.turn = this.data.currentPlayer ? this.data.currentPlayer.play_as : this.data.opponent.play_as;
+    this.data.isPlayerTurn = this.data.currentPlayer ? this.data.currentPlayer.is_player_turn : false;
+    this.trigger(this.data);
+  },
+
+  refreshPlayers() {
+    this.data.currentPlayer = _.find(this.data.players, ['id', this.data.currentPlayer.id]);
+    this.data.opponent = _.find(this.data.players, ['id', this.data.opponent.id]);
+    this.data.isPlayerTurn = this.data.currentPlayer ? this.data.currentPlayer.is_player_turn : false;
     this.trigger(this.data);
   },
 
@@ -145,24 +154,39 @@ export default Reflux.createStore({
     console.info('onDisconnectPlayerFailure');
   },
 
-  onEnablePoll() {
+  onEnableBoardPoll() {
     console.info('onEnablePoll');
   },
 
-  onEnablePollCompleted(channel) {
+  onEnableBoardPollCompleted(channel) {
     console.info('onEnablePollCompleted');
     let poll = channel.poll();
 
     poll.on('message', (data) => {
-      console.error('poll message', data);
-      if (data.metadata.class === Config.boardClassName) {
-        console.error('reenable POLLING');
-        Actions.updateField(data.payload.id, data.payload.value);
-      }
+      console.error('poll board message', data);
+      Actions.fetchBoard();
     });
   },
 
-  pnEnablePollFailure() {
+  pnEnableBoardPollFailure() {
+    console.info('pnEnablePollFailure');
+  },
+
+  onEnablePlayersPoll() {
+    console.info('onEnablePoll');
+  },
+
+  onEnablePlayersPollCompleted(channel) {
+    console.info('onEnablePollCompleted');
+    let poll = channel.poll();
+
+    poll.on('message', (data) => {
+      console.error('poll players message', data);
+      Actions.fetchPlayers();
+    });
+  },
+
+  pnEnablePlayersPollFailure() {
     console.info('pnEnablePollFailure');
   }
 });

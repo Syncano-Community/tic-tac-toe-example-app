@@ -4,7 +4,11 @@ import Config from '../Utils/Config';
 import D from 'd.js';
 
 let Actions = Reflux.createActions({
-  enablePoll: {
+  enableBoardPoll: {
+    children: ['completed', 'failure'],
+    asyncResult: true
+  },
+  enablePlayersPoll: {
     children: ['completed', 'failure'],
     asyncResult: true
   },
@@ -54,10 +58,16 @@ let channelParams = {
 };
 
 /* eslint-disable */
-Actions.enablePoll.listen(() => {
+Actions.enableBoardPoll.listen(() => {
   Connection.Channel.please().get(channelParams)
-    .then(Actions.enablePoll.completed)
-    .catch(Actions.enablePoll.failure);
+    .then(Actions.enableBoardPoll.completed)
+    .catch(Actions.enableBoardPoll.failure);
+});
+
+Actions.enablePlayersPoll.listen(() => {
+  Connection.Channel.please().get(channelParams)
+    .then(Actions.enablePlayersPoll.completed)
+    .catch(Actions.enablePlayersPoll.failure);
 });
 
 Actions.updateField.listen((objectId, value) => {
@@ -86,7 +96,6 @@ Actions.clearBoard.listen((objectIds) => {
 });
 
 Actions.fetchPlayers.listen(() => {
-  console.error('channels: ', Connection);
   Connection.DataObject.please().list(playersParams)
     .then(Actions.fetchPlayers.completed)
     .catch(Actions.fetchPlayers.failure);

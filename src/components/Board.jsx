@@ -12,15 +12,10 @@ export default React.createClass({
 
   mixins: [Reflux.connect(Store)],
 
-  getInitialState() {
-    return {
-      isPlayerTurn: true
-    };
-  },
-
   componentWillMount() {
     Actions.fetchBoard();
-    Actions.enablePoll();
+    Actions.enableBoardPoll();
+    Actions.enablePlayersPoll();
   },
 
   componentWillUpdate(nextProps, nextState) {
@@ -52,13 +47,13 @@ export default React.createClass({
 
   handleFieldClick(dataObjectId, index) {
     let state = this.state;
-    let value = state.currentPlayer.is_player_turn ? 'X' : 'O';
+    let value = state.currentPlayer.is_player_turn ? state.turn : state.turn;
 
     if (state.items[index].value === null) {
       Actions.updateField(dataObjectId, value);
       Actions.switchTurn(state.currentPlayer.id, state.opponent.id);
       state.items[index].value = value;
-      state.isPlayerTurn = !state.isPlayerTurn;
+      state.currentPlayer.is_player_turn = !state.currentPlayer.is_player_turn;
       this.setState(state);
     }
   },
@@ -71,7 +66,7 @@ export default React.createClass({
           ref={`field${item.id}`}
           value={item.value}
           backgroundColor={item.color}
-          disabled={this.state.winner || item.value}
+          disabled={!this.state.isPlayerTurn || this.state.winner || item.value}
           handleClick={this.handleFieldClick.bind(null, item.id, index)}/>
       );
     });
@@ -81,14 +76,15 @@ export default React.createClass({
 
   render() {
     let styles = this.getStyles();
-    let turn = this.state.isPlayerTurn ? 'X' : 'O';
+    let turn = this.state.turn;
     let state = this.state;
 
     console.error(
       'players: ', state.players,
       'available: ', state.availablePlayers,
       'current: ', state.currentPlayer ? state.currentPlayer.id : null,
-      'oponent: ', state.opponent ? state.opponent.id : null
+      'oponent: ', state.opponent ? state.opponent.id : null,
+      'isPLayerTurn', state.isPlayerTurn
     );
     return (
       <div>

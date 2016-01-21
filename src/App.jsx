@@ -19,11 +19,10 @@ let App = React.createClass({
     Actions.fetchPlayers();
   },
 
-
   render() {
     return (
       <Container>
-        {this.state.availablePlayers.length === 0 ? <NoSlots /> : <Board />}
+        {this.state.availablePlayers.length === 0 && !this.state.currentPlayer ? <NoSlots /> : <Board />}
       </Container>
     );
   }
