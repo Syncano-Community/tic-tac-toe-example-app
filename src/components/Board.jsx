@@ -5,6 +5,9 @@ import Actions from '../Actions/Actions';
 import Store from '../Stores/Store';
 
 import Field from './Field';
+import Loading from './Loading';
+import Header from './Header';
+import Button from './Button';
 
 export default React.createClass({
 
@@ -19,7 +22,7 @@ export default React.createClass({
   },
 
   componentWillUpdate(nextProps, nextState) {
-    if (nextState.currentPlayer) {
+    if (nextState.currentPlayer && !this.state.currentPlayer) {
       Actions.connectPlayer(nextState.currentPlayer.id);
     }
   },
@@ -35,14 +38,24 @@ export default React.createClass({
         justifyContent: 'center',
         maxWidth: 312,
         margin: '0px auto'
+      },
+      button: {
+        padding: '50px 0 20px 0',
+        display: 'flex',
+        justifyContent: 'center'
+      },
+      header: {
+        paddingBottom: 20
       }
     };
   },
 
   handleClearBoard() {
     let dataObjectsIds = this.state.items.map((dataObject) => dataObject.id);
+    let playersIds = this.state.players.map((player) => player.id);
 
     Actions.clearBoard(dataObjectsIds);
+    Actions.clearWinner(playersIds);
   },
 
   handleFieldClick(dataObjectId, index) {
@@ -59,14 +72,21 @@ export default React.createClass({
   },
 
   renderFields() {
-    let fields = this.state.items.map((item, index) => {
+    let state = this.state;
+    let fields = state.items.map((item, index) => {
+      let isDisabled = !state.isPlayerTurn ||
+        state.isGameOver ||
+        item.value ||
+        state.isLoading ||
+        (state.opponent && !state.opponent.is_connected);
+
       return (
         <Field
           key={`field${item.id}`}
           ref={`field${item.id}`}
           value={item.value}
           backgroundColor={item.color}
-          disabled={!this.state.isPlayerTurn || this.state.winner || item.value}
+          disabled={isDisabled}
           handleClick={this.handleFieldClick.bind(null, item.id, index)}/>
       );
     });
@@ -75,8 +95,8 @@ export default React.createClass({
   },
 
   render() {
+    console.error(this.state);
     let styles = this.getStyles();
-    let turn = this.state.turn;
     let state = this.state;
 
     console.error(
@@ -88,17 +108,22 @@ export default React.createClass({
     );
     return (
       <div>
+        <div style={styles.header}>
+          <Header
+            hasOpponent={state.opponent && state.opponent.is_connected}
+            player={state.currentPlayer}
+            turn={state.turn}
+            winner={state.winner}/>
+        </div>
         <div style={styles.board}>
           {this.renderFields()}
         </div>
-        <div>
-          {`Now it's player ${turn} turn`}
+        <div style={styles.button}>
+          <Button
+            handleClick={this.handleClearBoard}
+            label="new game"/>
         </div>
-        <div>
-          <button onClick={this.handleClearBoard}>
-            Clear board
-          </button>
-        </div>
+        <Loading visible={!state.isPlayerTurn && !state.winner}/>
       </div>
     );
   }

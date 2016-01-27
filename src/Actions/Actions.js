@@ -39,6 +39,14 @@ let Actions = Reflux.createActions({
   switchTurn: {
     children: ['completed', 'failure'],
     asyncResult: true
+  },
+  setWinner: {
+    children: ['completed', 'failure'],
+    asyncResult: true
+  },
+  clearWinner: {
+    children: ['completed', 'failure'],
+    asyncResult: true
   }
 });
 
@@ -65,6 +73,7 @@ Actions.enableBoardPoll.listen(() => {
 });
 
 Actions.enablePlayersPoll.listen(() => {
+  Object.assign(channelParams, {name: 'tictactoeplayers'});
   Connection.Channel.please().get(channelParams)
     .then(Actions.enablePlayersPoll.completed)
     .catch(Actions.enablePlayersPoll.failure);
@@ -91,7 +100,6 @@ Actions.clearBoard.listen((objectIds) => {
 
   D.all(promises)
     .success(Actions.clearBoard.completed)
-    .then(Actions.fetchBoard)
     .error(Actions.clearBoard.failure);
 });
 
@@ -110,7 +118,7 @@ Actions.connectPlayer.listen((currentPlayerId) => {
 
 Actions.disconnectPlayer.listen((currentPlayerId) => {
   Object.assign(playersParams, {id: currentPlayerId});
-  Connection.DataObject.please().update(playersParams, {is_connected: false})
+  Connection.DataObject.please().update(playersParams, {is_connected: false, is_winner: false})
     .then(Actions.disconnectPlayer.completed)
     .catch(Actions.disconnectPlayer.failure);
 });
@@ -126,6 +134,24 @@ Actions.switchTurn.listen((currentPlayerId, nextPlayerId) => {
   D.all(promises)
     .success(Actions.switchTurn.completed)
     .error(Actions.switchTurn.failure);
+});
+
+Actions.setWinner.listen((playerId) => {
+  Object.assign(playersParams, {id: playerId});
+  Connection.DataObject.please().update(playersParams, {is_winner: true})
+    .then(Actions.setWinner.completed)
+    .catch(Actions.setWinner.failure);
+});
+
+Actions.clearWinner.listen((playersIds) => {
+  let promises = playersIds.map((playerId) => {
+    Object.assign(playersParams, {id: playerId});
+    return Connection.DataObject.please().update(playersParams, {is_winner: false});
+  });
+
+  D.all(promises)
+    .success(Actions.clearWinner.completed)
+    .error(Actions.clearWinner.failure);
 });
 
 export default Actions;
