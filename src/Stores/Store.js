@@ -17,8 +17,7 @@ export default Reflux.createStore({
       isPlayerTurn: false,
       turn: null,
       isGameOver: false,
-      items: [],
-      isLoading: false
+      items: []
     };
   },
 
@@ -90,17 +89,15 @@ export default Reflux.createStore({
   isGameOver() {
     let data = this.data;
 
-    return (data.items < 0 && !_.some(data.items, ['value', null])) || _.some(data.players, ['is_winner', true]);
+    return (data.items && !_.some(data.items, ['value', null])) || _.some(data.players, ['is_winner', true]);
   },
 
   onUpdateField() {
-    this.data.isLoading = true;
     this.trigger(this.data);
   },
 
   onUpdateFieldCompleted(resp) {
     console.info('onUpdateFieldCompleted: ', resp);
-    this.data.isLoading = false;
     Actions.fetchBoard();
     Actions.fetchPlayers();
   },

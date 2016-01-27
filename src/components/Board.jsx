@@ -123,7 +123,7 @@ export default React.createClass({
             handleClick={this.handleClearBoard}
             label="new game"/>
         </div>
-        <Loading visible={!state.isPlayerTurn && !state.winner}/>
+        <Loading visible={!state.isPlayerTurn && !state.isGameOver}/>
       </div>
     );
   }
