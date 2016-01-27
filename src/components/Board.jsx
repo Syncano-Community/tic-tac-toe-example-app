@@ -60,14 +60,14 @@ export default React.createClass({
 
   handleFieldClick(dataObjectId, index) {
     let state = this.state;
-    let value = state.currentPlayer.is_player_turn ? state.turn : state.turn;
+    let value = state.turn;
 
     if (state.items[index].value === null) {
-      Actions.updateField(dataObjectId, value);
-      Actions.switchTurn(state.currentPlayer.id, state.opponent.id);
       state.items[index].value = value;
       state.currentPlayer.is_player_turn = !state.currentPlayer.is_player_turn;
       this.setState(state);
+      Actions.updateField(dataObjectId, value);
+      Actions.switchTurn(state.currentPlayer.id, state.opponent.id);
     }
   },
 

@@ -1,6 +1,6 @@
 const Config = {
   instanceName: 'snowy-rain-8828',
-  accountKey: '3fbf01082c5ed1002f12101c9135d6dcf397f332',
+  accountKey: '6b763a6eaf46a6b5dda0ed54470c28517bbe0257',
   boardClassName: 'tictactoe',
   playersClassName: 'tictactoeplayers'
 };

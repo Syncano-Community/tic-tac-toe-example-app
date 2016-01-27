@@ -14,7 +14,7 @@ export default React.createClass({
     return {
       textAlign: 'center',
       color: '#4CAF50',
-      fontSize: 30,
+      fontSize: 20,
       height: 40,
       width: '100%'
     };

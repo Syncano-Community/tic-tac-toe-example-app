@@ -33,7 +33,9 @@ export default Reflux.createStore({
       let testArr = [items[comb[0]].value, items[comb[1]].value, items[comb[2]].value];
 
       if (currentPlayer && this.isWinner(testArr)) {
-        Actions.setWinner(currentPlayer.id);
+        let winner = _.find(this.data.players, ['play_as', testArr[0]]);
+
+        Actions.setWinner(winner.id);
         comb.forEach((index) => {
           this.data.items[index].color = '#F44336';
         });
@@ -115,6 +117,10 @@ export default Reflux.createStore({
     console.info('onFetchPlayersCompleted');
     this.data.players = players;
     this.setAvailablePlayers();
+  },
+
+  onDisconnectPlayer() {
+    console.error('asdasd');
   },
 
   onDisconnectPlayerCompleted() {
