@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Spinner from './Spinner';
+
 export default React.createClass({
 
   displayName: 'Header',
@@ -7,6 +9,7 @@ export default React.createClass({
   getStyles() {
     return {
       base: {
+        color: '#607D8B',
         textAlign: 'center',
         fontWeight: 500,
         fontSize: 20
@@ -19,19 +22,31 @@ export default React.createClass({
   },
 
   renderContent() {
-    let styles = this.getStyles();
+    const styles = this.getStyles();
+    const player = this.props.player;
+    const winner = this.props.winner;
 
-    if (this.props.winner) {
+    if (winner) {
+      const winnerName = winner && player && winner.id === player.id ? 'You win!' : `${winner.name} wins!`;
+
       return (
         <div style={styles.winner}>
-          {`${this.props.winner.name} wins!`}
+          {winnerName}
+        </div>
+      );
+    }
+    if (this.props.isGameOver && !winner) {
+      return (
+        <div style={styles.winner}>
+          DRAW!
         </div>
       );
     }
     if (!this.props.hasOpponent) {
       return (
-        <div className="pulse">
+        <div style={styles.winner}>
           Waiting for opponent...
+          <Spinner />
         </div>
       );
     }

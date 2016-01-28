@@ -1,5 +1,7 @@
 import React from 'react';
 
+import Spinner from './Spinner';
+
 export default React.createClass({
 
   displayName: 'Loading',
@@ -13,7 +15,7 @@ export default React.createClass({
   getStyles() {
     return {
       textAlign: 'center',
-      color: '#4CAF50',
+      color: '#607D8B',
       fontSize: 20,
       height: 40,
       width: '100%'
@@ -25,6 +27,7 @@ export default React.createClass({
       return (
         <div>
           Pending...
+          <Spinner />
         </div>
       );
     }

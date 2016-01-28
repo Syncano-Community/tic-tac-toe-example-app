@@ -64,8 +64,8 @@ export default React.createClass({
 
     if (state.items[index].value === null) {
       state.items[index].value = value;
-      state.currentPlayer.is_player_turn = !state.currentPlayer.is_player_turn;
-      this.setState(state);
+      this.setState(state, () => {
+      });
       Actions.updateField(dataObjectId, value);
       Actions.switchTurn(state.currentPlayer.id, state.opponent.id);
     }
@@ -77,7 +77,6 @@ export default React.createClass({
       let isDisabled = !state.isPlayerTurn ||
         state.isGameOver ||
         item.value ||
-        state.isLoading ||
         (state.opponent && !state.opponent.is_connected);
 
       return (
@@ -95,21 +94,14 @@ export default React.createClass({
   },
 
   render() {
-    console.error(this.state);
     let styles = this.getStyles();
     let state = this.state;
 
-    console.error(
-      'players: ', state.players,
-      'available: ', state.availablePlayers,
-      'current: ', state.currentPlayer ? state.currentPlayer.id : null,
-      'oponent: ', state.opponent ? state.opponent.id : null,
-      'isPLayerTurn', state.isPlayerTurn
-    );
     return (
       <div>
         <div style={styles.header}>
           <Header
+            isGameOver={state.isGameOver}
             hasOpponent={state.opponent && state.opponent.is_connected}
             player={state.currentPlayer}
             turn={state.turn}

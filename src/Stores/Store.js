@@ -41,6 +41,7 @@ export default Reflux.createStore({
         });
       }
     });
+    this.data.isGameOver = this.isGameOver();
     this.trigger(this.data);
   },
 
@@ -54,6 +55,12 @@ export default Reflux.createStore({
     return items.every((item) => {
       return item === first;
     });
+  },
+
+  isGameOver() {
+    let data = this.data;
+
+    return (data.items && !_.some(data.items, ['value', null])) || _.some(data.players, ['is_winner', true]);
   },
 
   setAvailablePlayers() {
@@ -88,24 +95,16 @@ export default Reflux.createStore({
     this.trigger(this.data);
   },
 
-  isGameOver() {
-    let data = this.data;
-
-    return (data.items && !_.some(data.items, ['value', null])) || _.some(data.players, ['is_winner', true]);
-  },
-
   onUpdateField() {
     this.trigger(this.data);
   },
 
-  onUpdateFieldCompleted(resp) {
-    console.info('onUpdateFieldCompleted: ', resp);
+  onUpdateFieldCompleted() {
     Actions.fetchBoard();
     Actions.fetchPlayers();
   },
 
   onFetchBoardCompleted(dataObjects) {
-    console.info('onFetchBoardCompleted: ', dataObjects);
     this.data.items = dataObjects.map((item) => {
       item.color = '#00BCD4';
       return item;
@@ -114,37 +113,27 @@ export default Reflux.createStore({
   },
 
   onFetchPlayersCompleted(players) {
-    console.info('onFetchPlayersCompleted');
     this.data.players = players;
     this.setAvailablePlayers();
   },
 
-  onDisconnectPlayer() {
-    console.error('asdasd');
-  },
-
   onDisconnectPlayerCompleted() {
-    console.info('onDisconnectPlayerCompleted');
     Actions.fetchBoard();
     Actions.fetchPlayers();
   },
 
   onEnableBoardPollCompleted(channel) {
-    console.info('onEnablePollCompleted');
     let poll = channel.poll();
 
-    poll.on('message', (data) => {
-      console.error('poll board message', data);
+    poll.on('message', () => {
       Actions.fetchBoard();
     });
   },
 
   onEnablePlayersPollCompleted(channel) {
-    console.info('onEnablePollCompleted');
     let poll = channel.poll();
 
-    poll.on('message', (data) => {
-      console.error('poll players message', data);
+    poll.on('message', () => {
       Actions.fetchPlayers();
     });
   },
@@ -155,6 +144,11 @@ export default Reflux.createStore({
 
   onClearWinnerCompleted() {
     this.data.winner = null;
+    this.trigger(this.data);
+  },
+
+  onClearBoardCompleted(items) {
+    this.data.items = items;
     this.trigger(this.data);
   }
 });

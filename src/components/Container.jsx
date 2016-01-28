@@ -9,7 +9,7 @@ export default React.createClass({
       container: {
         margin: '50px auto',
         width: '50%',
-        padding: 30,
+        padding: 20,
         border: '1px solid #BDBDBD',
         borderRadius: '5px'
       }

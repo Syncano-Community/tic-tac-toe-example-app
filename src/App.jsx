@@ -19,18 +19,6 @@ let App = React.createClass({
     Actions.fetchPlayers();
   },
 
-  componentDidMount() {
-    window.onbeforeunload = this.handleCloseBrowser;
-  },
-
-  handleCloseBrowser() {
-    if (this.state.currentPlayer) {
-      console.error('event listener added');
-      Actions.disconnectPlayer(this.state.currentPlayer.id);
-      return "Do you really wan't to leave current game?";
-    }
-  },
-
   render() {
     return (
       <Container>
