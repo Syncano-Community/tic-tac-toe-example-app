@@ -1,4 +1,6 @@
 import Syncano from 'syncano';
-var connection = new Syncano({apiKey: '887e79a13201a795318d1372135847857789f6f7', instance: 'throbbing-voice-1318'});
+import Config from './Config';
 
-export default connection;
+const Connection = Syncano({accountKey: Config.accountKey});
+
+export default Connection;
