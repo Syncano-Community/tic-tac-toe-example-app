@@ -21,7 +21,6 @@ export default React.createClass({
     return (
       <div style={this.getStyles()}>
         Sorry, but there is no slots available. Please try again later.
-        <button onClick={this.clearSlots}> ClearSlots </button>
       </div>
     );
   }
