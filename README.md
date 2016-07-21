@@ -8,9 +8,8 @@ Computer games market is really huge and playing alone or with friend with the s
 Visual layer was writen in React, players data and current board status is reflection of Data Objects created in Syncano platform. The Flux architecture is kept by Actions and Stores provided by Reflux.  
 
 ## Before we begin
-To make this application work some steps need to be done. First you need to have Syncano account - can be created [here](https://dashboard.syncano.io/#/signup). If you already have one just go to syncano [dashboard](https://dashboard.syncano.io) and login. You will need all Classes, Data Objects etc. structure to make this app work. Fortunately Syncano provide Solutions which allow to share things like this with other developers or get ready apps from the others. Solution you will need is called "TicTacToe". Go to Solution list, search for it and install.
-After solution installation you will need to copy an Account key. Go to avatar dropdown and click "Copy Account Key". Now head to Scripts and chose the one named "TicTacToe". Switch Tab to Config and paste Account Key you've copied before. Also fill "instanceName" field with of course your Instance name. The last step is to run Script "InitDataObjects" to fill Classes with necessary DataObjects. You setup with Syncano is done!
-Now let's clone [this](https://github.com/hwesol13/Tic-Tac-Toe/archive/master.zip) repository. It's a visual representation of Data Objects from Syncano and some logic that controls the game, player turn or win check. After cloning you have to fill ```src/Utils/Config.js``` file with the same data like in previous steps - Account Key and Instance name.
+To make this application work some steps need to be done. First you need to have Syncano account - can be created [here](https://dashboard.syncano.io/#/signup). If you already have one just go to Syncano [dashboard](https://dashboard.syncano.io) and login. You will need all Classes, Data Objects etc. structure to make this app work. Fortunately you don't have to create them manually because we have DEMO APPS! Click "Demo Apps" link placed in dashboard header and install "Tic-Tac-Toe" app. After installation you will be redirected to "tic-tac-toe" Instance which is ready to use to play with game. Click You setup with Syncano is done!
+Now let's clone [this](https://github.com/hwesol13/Tic-Tac-Toe/archive/master.zip) repository. It's a visual representation of Data Objects from Syncano and some logic that controls the game, player turn or win check. After cloning you have to fill the "apiKey" field in ```src/Utils/Config.js``` with apiKey from "tic-tac-toe" Instance. It can be found in API Keys section.
 
 ## Connecting new players
 Players playing this game are represented by Syncano Data Objects, There are only two players available for this game and every of them have ```is_connected``` field. This field is telling application if connection for next player is allowed. If both players have this field set to ```true``` application will display proper notification. After new player join the game ```connectPlayer``` Action will be called. ```Actions.connectPlayer()``` is updating Data Object ```is_connected``` field from  ```false``` to ```true```.
@@ -199,9 +198,9 @@ isWinner(items) {
 ```
 
 ## Disconnectiong players
-Allright, we finished playing and we want to let others to play this game. No problem! The solution you have instaled at the beginning contains Schedule which trigger CodeBox™ every 5 minutes. This CodeBox™ is checking players activity and if any player didn't make move from 5 minutes will be disconnected.
+Alright, we finished playing and we want to let others to play this game. No problem! The Demo App you have installed at the beginning contains Schedule which trigger Script every 2 minutes. This Script is checking players activity and if any player didn't make move from 2 minutes will be disconnected.
 
-CodeBox™ cleanning inactive players
+Script cleaning inactive players
 
 ```js
 var Moment = require('moment');

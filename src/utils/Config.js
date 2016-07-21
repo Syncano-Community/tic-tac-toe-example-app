@@ -1,6 +1,6 @@
 const Config = {
-  instanceName: 'yourInstanceNameHere',
-  accountKey: 'yourApiKeyHere',
+  instanceName: 'tic-tac-toe',
+  apiKey: 'tic-tac-toe-api-key',
   boardClassName: 'tictactoe',
   playersClassName: 'tictactoeplayers'
 };
