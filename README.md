@@ -8,7 +8,9 @@ Computer games market is really huge and playing alone or with friend with the s
 Visual layer was written in React, players data and current board status is reflection of Data Objects created in Syncano platform. The Flux architecture is kept by Actions and Stores provided by Reflux.  
 
 ## Before we begin
-To make this application work some steps need to be done. First you need to have Node.js v6.2.2 installed. You can find it [here](https://nodejs.org/en/). After you've installed Node.js you will need application files. They're available in [this](https://github.com/Syncano-Community/tic-tac-toe-example-app) repository or can be just downloaded directly [here](https://github.com/Syncano-Community/tic-tac-toe-example-app/archive/master.zip). When you unzip files run you command line and move to destination where you've unzipped application files and run `npm install` command - this will install all required packages. After that run `npm start` command to start the Webpack server. That all! Tic-Tac-Toe application runs on `localhost:8080` so you can go and play!
+To make this application work some steps need to be done. First you need to have Node.js v6.2.2 installed. You can find it [here](https://nodejs.org/en/). After you've installed Node.js you will need application files. They're available in [this](https://github.com/Syncano-Community/tic-tac-toe-example-app) repository or can be just downloaded directly [here](https://github.com/Syncano-Community/tic-tac-toe-example-app/archive/master.zip). When you unzip files run you command line and move to destination where you've unzipped application files and run `npm install` command - this will install all required packages. After that run `npm start` command to start the Webpack server. That all! Tic-Tac-Toe application runs on `localhost:8080` so you can go and play, but remember! This game requires two players :). Of course you can hack this by opening another tab with `localhost:8080` and play with yourself.
+
+If from some reasons you don't want to go through all those steps you can just check it [here](https://syncano-community.github.io/tic-tac-toe-example-app/).
 
 # How does it work?
 
