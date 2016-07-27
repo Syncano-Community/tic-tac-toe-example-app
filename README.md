@@ -2,25 +2,34 @@
 Tic Tac Toe game based on ReactJS and Syncano
 
 ## Prolog
-Computer games market is really huge and playing alone or with friend with the same room is not enough for a long time. In shops and network we can find almost infinite count of games offering multiplayer gameplay not in the same room but in different corners of the world. Creating this type of multiplayer mode is not so hard to do but only if we use proper tools. TicTacToe application already reflect this.
+Online computer games market is really huge and playing alone or with a friend in the same room is kind of a prehistory. Currently, an infinite number of games offer online multiplayer gameplay. Multiplayer mode is not so hard to do, but only if we use proper tools. This TicTacToe app will show you how to do it.
 
 ## Technical info
-Visual layer was written in React, players data and current board status is reflection of Data Objects created in Syncano platform. The Flux architecture is kept by Actions and Stores provided by Reflux.  
+- Visual layer was written in React.
+- Players data and current board status is a representation of Data Objects created on Syncano platform. 
+- The Flux architecture is kept by Actions and Stores provided by Reflux.  
 
 ## Before we begin
-To make this application work some steps need to be done. First you need to have Node.js v6.2.2 installed. You can find it [here](https://nodejs.org/en/). After you've installed Node.js you will need application files. They're available in [this](https://github.com/Syncano-Community/tic-tac-toe-example-app) repository or can be just downloaded directly [here](https://github.com/Syncano-Community/tic-tac-toe-example-app/archive/master.zip). When you unzip files run you command line and move to destination where you've unzipped application files and run `npm install` command - this will install all required packages. After that run `npm start` command to start the Webpack server. That all! Tic-Tac-Toe application runs on `localhost:8080` so you can go and play, but remember! This game requires two players :). Of course you can hack this by opening another tab with `localhost:8080` and play with yourself.
+To make this application work some steps need to be done: 
+- First you need to have Node.js v6.2.2 installed. You can find it [here](https://nodejs.org/en/)
+- You will also need application files. They're available in [this](https://github.com/Syncano-Community/tic-tac-toe-example-app) repository or can be downloaded [here](https://github.com/Syncano-Community/tic-tac-toe-example-app/archive/master.zip).
+- When you unzip the repository files run your command line and move to destination where you've unzipped application files
+- Run `npm install` command - this will install all required packages. 
+- Run `npm start` command to start the Webpack server. 
 
-If for some reasons you don't want to go through all those steps you can just check it [here](https://syncano-community.github.io/tic-tac-toe-example-app/).
+That's all! Tic-Tac-Toe application runs on `localhost:8080` so you can go and play, but remember! This game requires two players :). Of course you can hack this by opening another tab with `localhost:8080` and play with yourself.
+
+If you'd like to see a working live example, go [here](https://syncano-community.github.io/tic-tac-toe-example-app/).
 
 # How does it work?
 
 ## Syncano backend
-To make it more clear how application works you can see prepared Syncano backend by installing Demo App. First you need to have Syncano account - can be created [here](https://dashboard.syncano.io/#/signup). If you already have one just go to Syncano [dashboard](https://dashboard.syncano.io) and login. Go to Demo Apps in header section and install the one named Tic-Tac-Toe. Now you can see in shared Instances list Instance `tic-tac-toe` which contain all needed things to make application work.
+To make it more clear how application works you can see prepared Syncano backend by installing Demo App. First you need to have a Syncano account, which can be created [here](https://dashboard.syncano.io/#/signup). If you already have one, just go to Syncano [dashboard](https://dashboard.syncano.io) and login. Go to Demo Apps in header section and install the one named Tic-Tac-Toe. Now you should see a `tic-tac-toe` Instance on the Shared Instances list. It contains all the data to make your application work.
 
-If you would like to prepare your own Instance you have to edit `src/Utils/Config.js` file with your data.
+If you would like to use your own Instance, you will have to edit `src/Utils/Config.js` file with your data.
 
 ## Connecting new players
-Players playing this game are represented by Syncano Data Objects, There are only two players available for this game and every of them have `is_connected` field. This field is telling application if connection for next player is allowed. If both players have this field set to `true` application will display proper notification. After new player join the game `connectPlayer` Action will be called. `Actions.connectPlayer()` is updating Data Object `is_connected` field from  `false` to `true`.
+Players in this game are represented by Syncano Data Objects. Two players can play simultanously and each one of them has `is_connected` field. This field is telling application if another player can join the game. If both players have this field set to `true`, application will display proper notification. After a new player joins the game, `connectPlayer` Action will be called. `Actions.connectPlayer()` is updating Data Object `is_connected` field from  `false` to `true`.
 
 `connectPlayer` action:
 ```js
@@ -48,10 +57,21 @@ Actions.connectPlayer.listen((currentPlayerId) => {
 ```
 
 ## Fetching initial data
-First of all let's talk about components. I'm not going to talk about every single component because the most of them  - if you know React even basics - are really simple and almost the same - take `props` and show them in proper place. But one of them is more complicated and need special attention - `Board.jsx`. It joins most of other components inside and hold some simple logic like calling update Data Objects.
-```ComponentWillMount``` method calls 3 ```Actions```: ```fetchBoard```, ```enableBoardPoll``` and ```enablePlayersPoll``` which properly download ```Data Objects```, start listening on changes in ```Data Objects``` holding board data and start listening on changes in ```Data Objects``` holding players informations. Because those ```Actions``` download data and ```Stores``` listening for ```Actions``` save this data inside of themselves and than trigger data into component, we  will see ready board when component is ready.
+First of all, let's talk about components. I'm not going to talk about every single
+component because most of them  - if you know even basics of React - are really 
+simple and almost the same - take `props` and show them in proper place. 
+But one of them is more complicated and needs special attention - `Board.jsx`. 
+It joins most of other components inside and holds some simple logic like calling
+ update Data Objects.
+ 
+`ComponentWillMount` method calls 3 `Actions`: `fetchBoard`, `enableBoardPoll` and
+ `enablePlayersPoll` which properly downloads `Data Objects`, start listening on 
+ changes in `Data Objects` holding board data and start listening on changes in 
+ `Data Objects` holding players information. Because those `Actions` download data
+and `Stores` listening for `Actions` save this data inside of themselves and than 
+trigger data into component, we  will see ready board when component is ready.
 
-```ComponentWillMount``` method:
+`ComponentWillMount` method:
 
 ```js
 componentWillMount() {
@@ -61,7 +81,7 @@ componentWillMount() {
 }
 ```
 
-```fetchBoard``` action:
+`fetchBoard` action:
 
 ```js
 import Reflux from 'reflux';
@@ -94,7 +114,7 @@ Actions.fetchBoard.listen(() => {
 });
 ```
 
-```enableBoardPoll``` and ```enablePlayersPoll``` actions:
+`enableBoardPoll` and `enablePlayersPoll` actions:
 
 ```js
 Actions.enableBoardPoll.listen(() => {
@@ -110,7 +130,16 @@ Actions.enablePlayersPoll.listen(() => {
     .catch(Actions.enablePlayersPoll.failure);
 });
 ```
-Now when players are connected and we have data fetched we can see what is happening after player click on some field on board (```handleFieldClick``` method). Well, the clicked field is updated in Syncano via ```updateFileld``` action and turn is switched via ```switchTurn``` action. If you look at ```Data Objects``` in ```tictactoeplayers``` class you will noticed that there is a field named ```is_player_turn```. In ```updateFiled``` action call this field is updated in both objects to simulate switching turn. As you can see there is ```setState``` method inside which is updating clicked field value locally to avoid waiting user for appearing value after API call is done. It will be updated also after call is finished. User will not see this but the opponent does.
+Now when players are connected, and we have data fetched, we can see what is happening 
+after a player clicks on some field on the game board (`handleFieldClick` method). 
+Well, the clicked field is updated in Syncano via `updateFileld` action and 
+turn is switched via `switchTurn` action. If you look at `Data Objects` in 
+`tictactoeplayers` class you will notice that there is a field named `is_player_turn`. 
+In `updateFiled` action call this field is updated in both objects to simulate 
+switching turn. As you can see there's a `setState` method inside. It updates 
+clicked field value locally to avoid waiting user for appearing value after 
+API call is done. It will be updated also after call is finished. User won't
+see this but the opponent will.
 
 ```js
 handleFieldClick(dataObjectId, index) {
@@ -127,7 +156,7 @@ handleFieldClick(dataObjectId, index) {
 }
 ```
 
-Not it's time to look on the opponent site and know how will he see the response on our click. To understand this we have to look into ```Store``` and find method named ```onEnableBoardPollCompleted``` and ```onEnablePlayersPollCompleted```. We can see that when some update on ```Data Objects``` appears proper action fetching ```Data Objects``` will be called. This will update whole board and opponent will see changes on his board.
+Now it's time to look on the opponent site and know how will he see the response on our click. To understand this we have to look into ```Store``` and find method named ```onEnableBoardPollCompleted``` and ```onEnablePlayersPollCompleted```. We can see that when some update on ```Data Objects``` appears proper action fetching ```Data Objects``` will be called. This will update whole board and opponent will see changes on his board.
 
 Actions enabling listening on ```Data Objects``` changes:
 
