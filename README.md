@@ -74,7 +74,7 @@ As you can see, it calls 3 `Actions` methods:
 - `Actions.enableBoardPoll()` - listens on changes in `Data Objects` holding board data
 - `Actions.enablePlayersPoll()` - listens on changes in `Data Objects` holding players info
 
-The flow data flow looks like this:
+The data flow looks like this:
 - `Actions` get the data from Syncano
 - `Stores` are listening to these `Actions`
 - When the `Store` sees that an `Action` was completed, it pushes the data into a component
@@ -152,7 +152,7 @@ handleFieldClick(dataObjectId, index) {
 }
 ```
 
-Now it's time to look on the opponent side. and know how will he see the response on our click. To understand how the opponent will see the response to our click, we have to look into the `Store` and find methods named `onEnableBoardPollCompleted()` and `onEnablePlayersPollCompleted()`. We can see, that when an update on `Data Objects` appears, proper `Action` that fetches the `Data Objects` will be called. This will update the whole board and opponent will see changes on his board.
+Now it's time to look on the opponent side. To understand how the opponent will see the response to our click, we have to look into the `Store` and find methods named `onEnableBoardPollCompleted()` and `onEnablePlayersPollCompleted()`. We can see, that when an update on `Data Objects` appears, proper `Action` that fetches the `Data Objects` will be called. This will update the whole board and opponent will see changes on his board.
 
 Actions that enable listening on `Data Objects` changes:
 
