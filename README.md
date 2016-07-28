@@ -24,12 +24,12 @@ If you'd like to see a working live example, go [here](https://syncano-community
 # How does it work?
 
 ## Syncano backend
-To make it more clear how application works you can see prepared Syncano backend by installing Demo App. First you need to have a Syncano account, which can be created [here](https://dashboard.syncano.io/#/signup). If you already have one, just go to Syncano [dashboard](https://dashboard.syncano.io) and login. Go to Demo Apps in header section and install the one named Tic-Tac-Toe. Now you should see a `tic-tac-toe` Instance on the Shared Instances list. It contains all the data to make your application work.
+To better understand how the application works you can check out the already set up Syncano backend by installing the Demo App. First, you'll need to have a Syncano account, which can be created [here](https://dashboard.syncano.io/#/signup). If you already have one, just go to Syncano [dashboard](https://dashboard.syncano.io) and login. Go to Demo Apps in header section and install the one named Tic-Tac-Toe. Now you should see a `tic-tac-toe` Instance on the Shared Instances list. It contains all the data to make your application work.
 
 If you would like to use your own Instance, you will have to edit `src/Utils/Config.js` file with your data.
 
 ## Connecting new players
-Players in this game are represented by Syncano Data Objects. Two players can play simultanously and each one of them has `is_connected` field. This field is telling application if another player can join the game. If both players have this field set to `true`, application will display proper notification. After a new player joins the game, `connectPlayer` Action will be called. `Actions.connectPlayer()` is updating Data Object `is_connected` field from  `false` to `true`.
+Players in the game are represented by Syncano Data Objects. Two players can play simultaneously and each one of them has `is_connected` field. This field is telling application if another player can join the game. If both players have this field set to `true`, application will display proper notification. After a new player joins the game, `connectPlayer` Action will be called. `Actions.connectPlayer()` is updating Data Object `is_connected` field from  `false` to `true`.
 
 `connectPlayer` action:
 ```js
@@ -57,21 +57,9 @@ Actions.connectPlayer.listen((currentPlayerId) => {
 ```
 
 ## Fetching initial data
-First of all, let's talk about components. I'm not going to talk about every single
-component because most of them  - if you know even basics of React - are really 
-simple and almost the same - take `props` and show them in proper place. 
-But one of them is more complicated and needs special attention - `Board.jsx`. 
-It joins most of other components inside and holds some simple logic like calling
- update Data Objects.
+First of all, let's talk about components. I'm not going through every single component because most of them  - if you know even basics of React - are really simple - take `props` and show them in a proper place. One of them - `Board.jsx` - is a bit more complicated and needs special attention. It joins most of the other components inside and holds some logic around updating Data Objects.
  
-`ComponentWillMount` method calls 3 `Actions`: `fetchBoard`, `enableBoardPoll` and
- `enablePlayersPoll` which properly downloads `Data Objects`, start listening on 
- changes in `Data Objects` holding board data and start listening on changes in 
- `Data Objects` holding players information. Because those `Actions` download data
-and `Stores` listening for `Actions` save this data inside of themselves and than 
-trigger data into component, we  will see ready board when component is ready.
-
-`ComponentWillMount` method:
+First method in Board.jsx file is `ComponentWillMount()`:
 
 ```js
 componentWillMount() {
@@ -80,6 +68,19 @@ componentWillMount() {
   Actions.enablePlayersPoll();
 }
 ```
+
+As you can see, it calls 3 `Actions` methods: 
+- `Actions.fetchBoard()` - handles getting Data Objects properly
+- `Actions.enableBoardPoll()` - listens on changes in `Data Objects` holding board data
+- `Actions.enablePlayersPoll()` - listens on changes in `Data Objects` holding players info
+
+The data flow looks like this:
+- `Actions` get the data from Syncano
+- `Stores` are listening to these `Actions`
+- When the `Store` sees that an `Action` was completed, it pushes the data into a component
+- The component renders after it receives new data
+
+
 
 `fetchBoard` action:
 
@@ -114,7 +115,7 @@ Actions.fetchBoard.listen(() => {
 });
 ```
 
-`enableBoardPoll` and `enablePlayersPoll` actions:
+`enableBoardPoll` action:
 
 ```js
 Actions.enableBoardPoll.listen(() => {
@@ -122,7 +123,11 @@ Actions.enableBoardPoll.listen(() => {
     .then(Actions.enableBoardPoll.completed)
     .catch(Actions.enableBoardPoll.failure);
 });
+```
 
+`enablePlayersPoll` action:
+
+```js
 Actions.enablePlayersPoll.listen(() => {
   Object.assign(channelParams, {name: 'tictactoeplayers'});
   Connection.Channel.please().get(channelParams)
@@ -130,16 +135,7 @@ Actions.enablePlayersPoll.listen(() => {
     .catch(Actions.enablePlayersPoll.failure);
 });
 ```
-Now when players are connected, and we have data fetched, we can see what is happening 
-after a player clicks on some field on the game board (`handleFieldClick` method). 
-Well, the clicked field is updated in Syncano via `updateFileld` action and 
-turn is switched via `switchTurn` action. If you look at `Data Objects` in 
-`tictactoeplayers` class you will notice that there is a field named `is_player_turn`. 
-In `updateFiled` action call this field is updated in both objects to simulate 
-switching turn. As you can see there's a `setState` method inside. It updates 
-clicked field value locally to avoid waiting user for appearing value after 
-API call is done. It will be updated also after call is finished. User won't
-see this but the opponent will.
+Now when players are connected, and we have data fetched, we can see what is happening after a player clicks on a field on the game board (`handleFieldClick()` method). The clicked field is updated in Syncano via `updateFileld` action and turn is switched via `switchTurn` action. If you look at `Data Objects` in `tictactoeplayers` class in Syncano you will notice that there is a field named `is_player_turn`. `updateFiled` action calls this field and it's updated in both Data Objects to simulate switching turn. As you can see there's a `setState` method inside. It updates clicked field value locally, so that the user doesn't have to wait for API call response. It will be also updated for the opponent after the API call is finished.
 
 ```js
 handleFieldClick(dataObjectId, index) {
@@ -156,9 +152,9 @@ handleFieldClick(dataObjectId, index) {
 }
 ```
 
-Now it's time to look on the opponent site and know how will he see the response on our click. To understand this we have to look into ```Store``` and find method named ```onEnableBoardPollCompleted``` and ```onEnablePlayersPollCompleted```. We can see that when some update on ```Data Objects``` appears proper action fetching ```Data Objects``` will be called. This will update whole board and opponent will see changes on his board.
+Now it's time to look on the opponent side. To understand how the opponent will see the response to our click, we have to look into the `Store` and find methods named `onEnableBoardPollCompleted()` and `onEnablePlayersPollCompleted()`. We can see, that when an update on `Data Objects` appears, proper `Action` that fetches the `Data Objects` will be called. This will update the whole board and opponent will see changes on his board.
 
-Actions enabling listening on ```Data Objects``` changes:
+Actions that enable listening on `Data Objects` changes:
 
 ```js
 onEnableBoardPollCompleted(channel) {
@@ -178,25 +174,23 @@ onEnablePlayersPollCompleted(channel) {
 }
 ```
 
-When you look on ```renderFields``` method you will see that field can be disabled (unable to be clicked and put symbol inside) in a few cases. Let's focus on one which is checking if it is our turn. Do you remember ```switchTurn``` action? Yeah! It's updating players ```Data Objects``` and because we have enabled listening on those objects changes both clients will be noticed about changes and only opponent will be able to click fields.
+When you look on `renderFields` method, you will see that the field can be disabled in few cases. One of them is checking who's turn it is. Do you remember `switchTurn` action? Great! Its updating players `Data Objects`. Because we have enabled listening on those `Data Objects` changes, both clients will be notified about those change. Thanks to this, only one player will be able to make a move.
 
-## Checking winner
-Every game should have a winner! Fortunately the rules of this game are not complicated so we can define all winning cases.
+## Determining a winner
+Every game should have a winner! Fortunately the rules of this game are not complicated so we can define all winning cases (see the `src/Stores/Store.js` file):
 
-Winning combinations
 
 ```js
 winCombinations: [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]],
 ```
 
-Each array element contains array with indexes of board which filled with the same values makes player win.
-
-Example for ```[0, 3, 6]```:
+`winCombinations` is an array of arrays. Each array element contains board indexes that make a winning combination. For example a `[0, 3, 6]` combination is:
 ```js
 X  -  -
 X  -  -
 X  -  -
 ```
+So it's a winner!
 
 Checking winning combinations method:
 
@@ -235,9 +229,9 @@ isWinner(items) {
 ```
 
 ## Disconnecting players
-Alright, we finished playing and we want to let others to play this game. No problem! The Demo App you have installed at the beginning contains Schedule which trigger Script every 2 minutes. This Script is checking players activity and if any player didn't make move from 2 minutes will be disconnected.
+Alright. We've finished playing and we want to let others play this game. No problem! The Demo App you have installed at the beginning contains Schedule which triggers a Script every 2 minutes. This Script is checking players activity, and if any player didn't make move for 2 minutes, he will be disconnected.
 
-Script cleaning inactive players
+Script cleaning inactive players:
 
 ```js
 var Moment = require('moment');
@@ -262,6 +256,6 @@ connection.class(CONFIG.className).dataobject().list().then(function(resp) {
 
 
 ## Summary
-I'm sure you would ask me why only 2 payers can play this game. Don't worry :) it will happen soon. Stay tuned and we will expand this app on new features like rooms to allow more players play game in the same time.
+I'm sure you want to ask why only two players can play this game. Don't worry :) it will happen soon. Stay tuned and we will expand this app with new features like rooms, that allow multiple users play the game at the same time.
 
-You can find whole code on [GitHub](https://github.com/Syncano-Community/tic-tac-toe-example-app/archive/master.zip)
+You can find the whole code on [GitHub](https://github.com/Syncano-Community/tic-tac-toe-example-app/archive/master.zip)
